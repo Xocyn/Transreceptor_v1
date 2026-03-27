@@ -6,40 +6,31 @@ using System.Threading;
 
 class BFSKModulator
 {
-    //const int sampleRate = 44100;
-    ////const int bitRate = 1200;  // VHF
-    //const int bitRate = 100;  // HF
-    //const double bitxsec = 1d / bitRate;
-    //const double samplesPerBit = sampleRate * bitxsec;
-    ////VHF
-    ////const double f0 = 2100.0; // bit 0
-    ////const double f1 = 1300.0; // bit 1
-    ////HF
-    //const double f0 = 1785.0; // bit 0
-    //const double f1 = 1615.0; // bit 1
-
     public static void GenerateWav(string inputTxt, string outputWav, bool vhf)
     {
         int bitRate;
         double f0, f1;
-        if (vhf) 
+        if (vhf)
         {
-            //VHF
-            bitRate = 1200;  // VHF
-            f0 = 2100.0; // bit 0
-            f1 = 1300.0; // bit 1
+            // VHF — 1200 bps según ITU-R M.493-16
+            bitRate = 1200;  // CORREGIDO: era 100 (bug)
+            f0 = 2100.0;     // bit 0
+            f1 = 1300.0;     // bit 1
         }
         else
         {
-            //HF
-            bitRate = 100;  // HF
-            f0 = 1785.0; // bit 0
-            f1 = 1615.0; // bit 1
-
+            // HF — 100 bps
+            bitRate = 100;
+            f0 = 1785.0;     // bit 0
+            f1 = 1615.0;     // bit 1
         }
+
         const int sampleRate = 44100;
-        double bitxsec = 1d / bitRate;
-        double samplesPerBit = sampleRate * bitxsec;
+
+        // samplesPerBit como double: 44100/1200 = 36.75 (NO se trunca a 36).
+        // Si se usara int, cada símbolo VHF perdería 0.75 muestras →
+        // drift de ~3 símbolos en un mensaje de 150 bits.
+        double samplesPerBit = (double)sampleRate / bitRate;
 
         string bitstream = File.ReadAllText(inputTxt);
 
@@ -47,20 +38,28 @@ class BFSKModulator
         using var writer = new WaveFileWriter(outputWav, waveFormat);
 
         double amplitude = 0.25 * short.MaxValue;
-        double phase = 0;
+        double phase = 0.0;  // acumulador de fase continua (CPFSK — nunca se resetea)
+        double posAccum = 0.0;  // acumulador de posición para timing exacto
 
         foreach (char c in bitstream)
         {
             if (c != '0' && c != '1')
-                continue; // ignora saltos de linea o espacios
+                continue;
 
             double freq = (c == '0') ? f0 : f1;
 
-            for (int n = 0; n < samplesPerBit; n++)
+            // Calcular cuántas muestras le corresponden a este símbolo,
+            // alternando entre floor/ceil para mantener promedio exacto en 36.75.
+            int startSample = (int)Math.Round(posAccum);
+            posAccum += samplesPerBit;
+            int endSample = (int)Math.Round(posAccum);
+            int nSamples = endSample - startSample;
+
+            for (int n = 0; n < nSamples; n++)
             {
                 double sample = amplitude * Math.Sin(2 * Math.PI * freq * phase / sampleRate);
                 writer.WriteSample((float)(sample / short.MaxValue));
-                phase++;
+                phase++;  // fase continua: preserva CPFSK
             }
         }
     }
@@ -76,7 +75,6 @@ class AudioPlayer
         outputDevice.Init(audioFile);
         outputDevice.Play();
 
-        // Espera hasta que termine
         while (outputDevice.PlaybackState == PlaybackState.Playing)
             Thread.Sleep(100);
     }

@@ -164,7 +164,7 @@ namespace Transreceptor_v1
             }
             dot.Append(pss);
 
-            string rutadesalida = @"C:\Users\playg\Desktop\WORK\Programas LSD\Pruebas\Dem_v0\Dem_v0\Dem_v0\bin\Debug\net10.0";
+            string rutadesalida = AppDomain.CurrentDomain.BaseDirectory;
 
             string archivoFinal = Path.Combine(rutadesalida, "prueba_transreceptor.txt");
 
