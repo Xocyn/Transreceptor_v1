@@ -32,7 +32,6 @@
             label_mmsi = new Label();
             MMSI_in = new TextBox();
             nature_distress = new ComboBox();
-            Display = new RichTextBox();
             op_mf_hf = new RadioButton();
             grupo_frec = new GroupBox();
             op_vhf = new RadioButton();
@@ -45,8 +44,18 @@
             label_distress = new Label();
             combox_sig_com = new ComboBox();
             label_com_sig = new Label();
+            categoria = new GroupBox();
+            radioButton1 = new RadioButton();
+            radioButton2 = new RadioButton();
+            txt_tx = new TextBox();
+            label1 = new Label();
+            txt_rx = new TextBox();
+            label2 = new Label();
+            label3 = new Label();
+            canal_box = new ComboBox();
             grupo_frec.SuspendLayout();
             grupo_formato.SuspendLayout();
+            categoria.SuspendLayout();
             SuspendLayout();
             // 
             // boton_socorro
@@ -88,15 +97,6 @@
             nature_distress.TabIndex = 4;
             nature_distress.Visible = false;
             nature_distress.SelectedIndexChanged += nature_distress_SelectedIndexChanged;
-            // 
-            // Display
-            // 
-            Display.Location = new Point(79, 240);
-            Display.Name = "Display";
-            Display.Size = new Size(428, 103);
-            Display.TabIndex = 8;
-            Display.Text = "";
-            Display.Visible = false;
             // 
             // op_mf_hf
             // 
@@ -195,7 +195,7 @@
             // boton_enviar
             // 
             boton_enviar.BackColor = Color.Lime;
-            boton_enviar.Location = new Point(576, 258);
+            boton_enviar.Location = new Point(619, 246);
             boton_enviar.Name = "boton_enviar";
             boton_enviar.Size = new Size(74, 61);
             boton_enviar.TabIndex = 12;
@@ -236,28 +236,136 @@
             label_com_sig.Text = "Comunicaciones siguientes";
             label_com_sig.Visible = false;
             // 
+            // categoria
+            // 
+            categoria.Controls.Add(radioButton1);
+            categoria.Controls.Add(radioButton2);
+            categoria.Location = new Point(28, 231);
+            categoria.Name = "categoria";
+            categoria.Size = new Size(128, 92);
+            categoria.TabIndex = 11;
+            categoria.TabStop = false;
+            categoria.Text = "Categoria";
+            categoria.Visible = false;
+            // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Location = new Point(20, 56);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(89, 24);
+            radioButton1.TabIndex = 10;
+            radioButton1.TabStop = true;
+            radioButton1.Text = "Urgencia";
+            radioButton1.UseVisualStyleBackColor = true;
+            radioButton1.CheckedChanged += radioButton_categoria_CheckedChanged;
+            // 
+            // radioButton2
+            // 
+            radioButton2.AutoSize = true;
+            radioButton2.Location = new Point(20, 26);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(98, 24);
+            radioButton2.TabIndex = 9;
+            radioButton2.TabStop = true;
+            radioButton2.Text = "Seguridad";
+            radioButton2.UseVisualStyleBackColor = true;
+            radioButton2.CheckedChanged += radioButton_categoria_CheckedChanged;
+            // 
+            // txt_tx
+            // 
+            txt_tx.Location = new Point(309, 243);
+            txt_tx.Name = "txt_tx";
+            txt_tx.Size = new Size(125, 27);
+            txt_tx.TabIndex = 17;
+            txt_tx.Visible = false;
+            txt_tx.TextChanged += txt_tx_TextChanged;
+            txt_tx.KeyPress += NumericKeyPress_6Digits;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Enabled = false;
+            label1.Location = new Point(182, 246);
+            label1.Name = "label1";
+            label1.Size = new Size(121, 20);
+            label1.TabIndex = 16;
+            label1.Text = "Frecuencia de Tx:";
+            label1.Visible = false;
+            // 
+            // txt_rx
+            // 
+            txt_rx.Location = new Point(309, 284);
+            txt_rx.Name = "txt_rx";
+            txt_rx.Size = new Size(125, 27);
+            txt_rx.TabIndex = 19;
+            txt_rx.Visible = false;
+            txt_rx.TextChanged += txt_rx_TextChanged;
+            txt_rx.KeyPress += NumericKeyPress_6Digits;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Enabled = false;
+            label2.Location = new Point(182, 287);
+            label2.Name = "label2";
+            label2.Size = new Size(123, 20);
+            label2.TabIndex = 18;
+            label2.Text = "Frecuencia de Rx:";
+            label2.Visible = false;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(503, 250);
+            label3.Name = "label3";
+            label3.Size = new Size(46, 20);
+            label3.TabIndex = 21;
+            label3.Text = "Canal";
+            label3.Visible = false;
+            // 
+            // canal_box
+            // 
+            canal_box.FormattingEnabled = true;
+            canal_box.Items.AddRange(new object[] { "2187.5 kHz", "4207.5 kHz", "CH 70", "CH 16" });
+            canal_box.Location = new Point(466, 273);
+            canal_box.Name = "canal_box";
+            canal_box.Size = new Size(122, 28);
+            canal_box.TabIndex = 20;
+            canal_box.Visible = false;
+            canal_box.SelectedIndexChanged += canal_box_SelectedIndexChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(723, 355);
+            Controls.Add(label3);
+            Controls.Add(canal_box);
+            Controls.Add(txt_rx);
+            Controls.Add(label2);
+            Controls.Add(txt_tx);
+            Controls.Add(label1);
+            Controls.Add(categoria);
             Controls.Add(label_com_sig);
             Controls.Add(combox_sig_com);
             Controls.Add(label_distress);
             Controls.Add(boton_enviar);
             Controls.Add(grupo_formato);
             Controls.Add(grupo_frec);
-            Controls.Add(Display);
             Controls.Add(nature_distress);
             Controls.Add(MMSI_in);
             Controls.Add(label_mmsi);
             Controls.Add(boton_socorro);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "Form1";
             Text = "Transreceptor_v1";
             grupo_frec.ResumeLayout(false);
             grupo_frec.PerformLayout();
             grupo_formato.ResumeLayout(false);
             grupo_formato.PerformLayout();
+            categoria.ResumeLayout(false);
+            categoria.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -268,7 +376,6 @@
         private Label label_mmsi;
         private TextBox MMSI_in;
         private ComboBox nature_distress;
-        private RichTextBox Display;
         private RadioButton op_mf_hf;
         private GroupBox grupo_frec;
         private RadioButton op_vhf;
@@ -281,5 +388,14 @@
         private Label label_distress;
         private ComboBox combox_sig_com;
         private Label label_com_sig;
+        private GroupBox categoria;
+        private RadioButton radioButton1;
+        private RadioButton radioButton2;
+        private TextBox txt_tx;
+        private Label label1;
+        private TextBox txt_rx;
+        private Label label2;
+        private Label label3;
+        private ComboBox canal_box;
     }
 }

@@ -13,7 +13,7 @@ class BFSKModulator
         if (vhf)
         {
             // VHF — 1200 bps según ITU-R M.493-16
-            bitRate = 1200;  // CORREGIDO: era 100 (bug)
+            bitRate = 1200;
             f0 = 2100.0;     // bit 0
             f1 = 1300.0;     // bit 1
         }
@@ -38,7 +38,7 @@ class BFSKModulator
         using var writer = new WaveFileWriter(outputWav, waveFormat);
 
         double amplitude = 0.25 * short.MaxValue;
-        double phase = 0.0;  // acumulador de fase continua (CPFSK — nunca se resetea)
+        double phase = 0.0;  // acumulador de fase continua (radianes)
         double posAccum = 0.0;  // acumulador de posición para timing exacto
 
         foreach (char c in bitstream)
@@ -47,6 +47,7 @@ class BFSKModulator
                 continue;
 
             double freq = (c == '0') ? f0 : f1;
+            double phaseIncrement = 2 * Math.PI * freq / sampleRate;  // incremento de fase por muestra
 
             // Calcular cuántas muestras le corresponden a este símbolo,
             // alternando entre floor/ceil para mantener promedio exacto en 36.75.
@@ -57,9 +58,9 @@ class BFSKModulator
 
             for (int n = 0; n < nSamples; n++)
             {
-                double sample = amplitude * Math.Sin(2 * Math.PI * freq * phase / sampleRate);
+                double sample = amplitude * Math.Sin(phase);
                 writer.WriteSample((float)(sample / short.MaxValue));
-                phase++;  // fase continua: preserva CPFSK
+                phase += phaseIncrement;  // incrementa fase de forma continua y suave
             }
         }
     }

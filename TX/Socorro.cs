@@ -47,43 +47,43 @@ namespace Transreceptor_v1
         }
 
         public static void NatureofDistress(StringBuilder resultadoConChequeo, List<int> ECC, int op)
-        { 
+        {
             switch (op)
             {
                 case 0:
-                     Convertir.ConvertirNumero(100, resultadoConChequeo); ECC.Add(100);
-                   break;
+                    Convertir.ConvertirNumero(100, resultadoConChequeo); ECC.Add(100);
+                    break;
                 case 1:
                     Convertir.ConvertirNumero(101, resultadoConChequeo); ECC.Add(101);
-                   break;
-                 case 2:
-                     Convertir.ConvertirNumero(102, resultadoConChequeo); ECC.Add(102);
                     break;
-                 case 3:
-                      Convertir.ConvertirNumero(103, resultadoConChequeo); ECC.Add(103);
+                case 2:
+                    Convertir.ConvertirNumero(102, resultadoConChequeo); ECC.Add(102);
                     break;
-                 case 4:
-                      Convertir.ConvertirNumero(104, resultadoConChequeo); ECC.Add(104);
+                case 3:
+                    Convertir.ConvertirNumero(103, resultadoConChequeo); ECC.Add(103);
                     break;
-                 case 5:
-                     Convertir.ConvertirNumero(105, resultadoConChequeo); ECC.Add(105);
+                case 4:
+                    Convertir.ConvertirNumero(104, resultadoConChequeo); ECC.Add(104);
                     break;
-                 case 6:
-                      Convertir.ConvertirNumero(106, resultadoConChequeo); ECC.Add(106);
+                case 5:
+                    Convertir.ConvertirNumero(105, resultadoConChequeo); ECC.Add(105);
                     break;
-                 case 7:
-                     Convertir.ConvertirNumero(107, resultadoConChequeo); ECC.Add(107);
+                case 6:
+                    Convertir.ConvertirNumero(106, resultadoConChequeo); ECC.Add(106);
                     break;
-                 case 8:
-                     Convertir.ConvertirNumero(108, resultadoConChequeo); ECC.Add(108);
+                case 7:
+                    Convertir.ConvertirNumero(107, resultadoConChequeo); ECC.Add(107);
                     break;
-                 case 9:
-                     Convertir.ConvertirNumero(109, resultadoConChequeo); ECC.Add(109);
+                case 8:
+                    Convertir.ConvertirNumero(108, resultadoConChequeo); ECC.Add(108);
                     break;
-                 case 10:
+                case 9:
+                    Convertir.ConvertirNumero(109, resultadoConChequeo); ECC.Add(109);
+                    break;
+                case 10:
                     Convertir.ConvertirNumero(110, resultadoConChequeo); ECC.Add(110);
                     break;
-                 default:
+                default:
                     break;
             }
         }
@@ -114,11 +114,11 @@ namespace Transreceptor_v1
                 default:
                     break;
             }
-            
+
         }
 
         public static void Posicion(StringBuilder resultadoConChequeo, List<int> ECC)
-        { 
+        {
             // -38.04248790955501, -57.545178158600976  MDP
             Convertir.ConvertirNumero(33, resultadoConChequeo); ECC.Add(33);
             Convertir.ConvertirNumero(80, resultadoConChequeo); ECC.Add(80);
@@ -137,19 +137,48 @@ namespace Transreceptor_v1
             Convertir.ConvertirNumero(hora, resultadoConChequeo); ECC.Add(hora);
             Convertir.ConvertirNumero(minutos, resultadoConChequeo); ECC.Add(minutos);
         }
-        static void SubCom()
+    }
+
+    internal class General
+    {
+        static public void Frec(StringBuilder resultadoConChequeo, List<int> ECC, string numero)
         {
-            Console.WriteLine("╔═══════════════════════════════════════════════════════╗");
-            Console.WriteLine("║             ¿ Como sigue la comunicación ?            ║");
-            Console.WriteLine("╚═══════════════════════════════════════════════════════╝\n");
+            List<int> mmsi = new List<int>();
 
-            Console.WriteLine("1. F3E/G3E ALL MODES TP");
-            Console.WriteLine("2. F3E/G3E DUPLEX TP");
-            Console.WriteLine("3. J3E TP");
-            Console.WriteLine("4. F1B/J2B TTY-FEC");
-            Console.WriteLine("5. F1B/J2B TTY-ARQ");
-            Console.WriteLine("6. Sin información");
+            // Agrupar de 2 en 2
+            List<string> grupos = Agrupar_2(numero);
+            foreach (string grupo in grupos)
+            {
+                int value = Convert.ToInt32(grupo, 10);
+                mmsi.Add(value);
+            }
 
+            foreach (int mm in mmsi)
+            {
+                ECC.Add(mm);
+                Convertir.ConvertirNumero(mm, resultadoConChequeo);
+            }
+
+        }
+
+        static List<string> Agrupar_2(string numero)
+        {
+            List<string> grupos = new List<string>();
+
+            // Si es impar, agregar '3' al inicio
+            if (numero.Length % 2 != 0)
+            {
+                numero = "3" + numero; // se le agrega un 3 al inicio
+            }
+
+            // Agrupar de 2 en 2
+            for (int i = 0; i < numero.Length; i += 2)
+            {
+                string grupo = numero.Substring(i, 2);
+                grupos.Add(grupo);
+            }
+
+            return grupos;
         }
     }
 }
