@@ -1,3 +1,4 @@
+using System.Diagnostics.Eventing.Reader;
 using System.Text;
 
 namespace Transreceptor_v1
@@ -21,6 +22,12 @@ namespace Transreceptor_v1
         {
             mmsi = MMSI_in.Text;
             VerificarCondiciones();
+
+            if (op_mf_hf.Checked && form_geografica.Checked && mmsi.Length == 9 && mmsi.All(char.IsDigit) && (cat_seguridad.Checked || cat_urgencia.Checked))
+            { 
+                boton_enviar.Visible = true;
+            }
+
             //Display.Visible = true;
             //Display.Text = $"MMSI: {mmsi}"; // prueba display
         }
@@ -100,7 +107,7 @@ namespace Transreceptor_v1
             if (frecuenciaSeleccionada && mmsiValido)
             {
                 // Condiciones para SOCORRO
-                if (!form_all_ships.Checked)
+                if (!form_all_ships.Checked && !form_geografica.Checked)
                 {
                     bool distressSeleccionado = nature_distress.SelectedIndex != -1;
                     bool comunicacionSeleccionada = combox_sig_com.SelectedIndex != -1;
@@ -109,7 +116,7 @@ namespace Transreceptor_v1
                 // Condiciones para ALL SHIPS
                 else if (form_all_ships.Checked)
                 {
-                    bool categoriaSeleccionada = radioButton1.Checked || radioButton2.Checked;
+                    bool categoriaSeleccionada = cat_urgencia.Checked || cat_seguridad.Checked;
                     bool frecuenciaTxValida = !string.IsNullOrWhiteSpace(txt_tx.Text) && txt_tx.Text.All(char.IsDigit);
                     bool frecuenciaRxValida = !string.IsNullOrWhiteSpace(txt_rx.Text) && txt_rx.Text.All(char.IsDigit);
                     bool canalSeleccionado = canal_box.SelectedIndex != -1;
@@ -119,6 +126,20 @@ namespace Transreceptor_v1
                     bool usaCanal = canalSeleccionado && !frecuenciasSeleccionadas;
                     bool frecuenciasOCanal = usaFrecuencias || usaCanal;
                     botonEnviarVisible = categoriaSeleccionada && frecuenciasOCanal;
+                }
+                // Condiciones para GEOGRAFICA
+                else if (form_geografica.Checked)
+                {
+                    bool categoriaSeleccionada = cat_urgencia.Checked || cat_seguridad.Checked;
+                    bool frecuenciaTxValida = !string.IsNullOrWhiteSpace(txt_tx.Text) && txt_tx.Text.All(char.IsDigit);
+                    bool frecuenciaRxValida = !string.IsNullOrWhiteSpace(txt_rx.Text) && txt_rx.Text.All(char.IsDigit);
+                    bool canalSeleccionado = canal_box.SelectedIndex != -1;
+                    // Requiere categoría AND (ambas frecuencias XOR canal - uno u otro, no ambos)
+                    bool frecuenciasSeleccionadas = frecuenciaTxValida && frecuenciaRxValida;
+                    bool usaFrecuencias = frecuenciasSeleccionadas && canalSeleccionado == false;
+                    bool usaCanal = canalSeleccionado && !frecuenciasSeleccionadas;
+                    bool frecuenciasOCanal = usaFrecuencias || usaCanal;
+                    botonEnviarVisible = (op_mf_hf.Checked && mmsiValido && categoriaSeleccionada && frecuenciasOCanal);
                 }
             }
 
@@ -141,7 +162,7 @@ namespace Transreceptor_v1
         private void op_vhf_CheckedChanged(object sender, EventArgs e)
         {
             VHF = true;
-            if (form_all_ships.Checked && op_vhf.Checked)
+            if (form_all_ships.Checked && (op_vhf.Checked || op_mf_hf.Checked))
             {
                 categoria.Visible = true;
                 label1.Visible = true;
@@ -168,12 +189,11 @@ namespace Transreceptor_v1
         {
             VHF = false;
             VerificarCondiciones();
-
         }
 
         private void boton_enviar_Click(object sender, EventArgs e)
         {
-            if (!form_all_ships.Checked)
+            if (!form_all_ships.Checked && !form_geografica.Checked)
             {
                 // Enviar mensaje de SOCORRO
                 EnviarSocorro();
@@ -182,6 +202,10 @@ namespace Transreceptor_v1
             {
                 // Enviar mensaje ALL SHIPS
                 EnviarAllShips();
+            }
+            else if (form_geografica.Checked)
+            {
+                EnviarGeografica();
             }
         }
 
@@ -272,19 +296,40 @@ namespace Transreceptor_v1
             // TODO: Implementar lógica para mensaje ALL SHIPS
             // Aquí van las diferentes líneas de código para ALL SHIPS
             Convertir.ConvertirNumero(116, resultadoConChequeo); Convertir.ConvertirNumero(116, resultadoConChequeo); ECC.Add(116);
-            bool esSeguridad = radioButton2.Checked;
+            bool esSeguridad = cat_seguridad.Checked;
             if (esSeguridad)
             {
                 Convertir.ConvertirNumero(108, resultadoConChequeo); ECC.Add(108);
             }
             else
             {
-                Convertir.ConvertirNumero(110, resultadoConChequeo); ECC.Add(110); 
+                Convertir.ConvertirNumero(110, resultadoConChequeo); ECC.Add(110);
             }
             mmsi = MMSI_in.Text;
             Socorro.MMSI(resultadoConChequeo, ECC, mmsi);
-            Convertir.ConvertirNumero(100, resultadoConChequeo); ECC.Add(100); // FIJO ALL MODES --> primer telecomando
-            Convertir.ConvertirNumero(126, resultadoConChequeo); ECC.Add(126); // NO INFO --> segundo telecomando
+            ////PRIMER TELECOMANDO////
+            if (op_mf_hf.Checked)
+            {
+                Convertir.ConvertirNumero(109, resultadoConChequeo); ECC.Add(109);
+            }
+            else
+            {
+                Convertir.ConvertirNumero(100, resultadoConChequeo); ECC.Add(100); // FIJO ALL MODES --> primer telecomando    
+            }
+
+            ////SEGUNDO TELECOMANDO////
+            if (nave_medica.Checked)
+            {
+                Convertir.ConvertirNumero(111, resultadoConChequeo); ECC.Add(111);
+            }
+            else if (nave_aeronave.Checked)
+            {
+                Convertir.ConvertirNumero(110, resultadoConChequeo); ECC.Add(110);
+            }
+            else
+            {
+                Convertir.ConvertirNumero(126, resultadoConChequeo); ECC.Add(126); // NO INFO --> segundo telecomando
+            }
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Enviar datos según el modo seleccionado
@@ -378,6 +423,141 @@ namespace Transreceptor_v1
             _modoActual = ModoFrecuencia.Ninguno;
             _updatingUI = false;
             form_all_ships.Checked = false;
+        }
+
+        private void EnviarGeografica()
+        {
+            Convertir.ConvertirNumero(102, resultadoConChequeo); Convertir.ConvertirNumero(102, resultadoConChequeo); ECC.Add(102);
+
+            // AREA FIJA //
+            Convertir.ConvertirNumero(33, resultadoConChequeo); ECC.Add(33);
+            Convertir.ConvertirNumero(80, resultadoConChequeo); ECC.Add(80);
+            Convertir.ConvertirNumero(57, resultadoConChequeo); ECC.Add(57);
+            Convertir.ConvertirNumero(05, resultadoConChequeo); ECC.Add(05);
+            Convertir.ConvertirNumero(05, resultadoConChequeo); ECC.Add(05);
+
+            // OCULTAR O NO SEGURIDAD/URGENCIA //
+
+            if (nave_medica.Checked || nave_aeronave.Checked || cat_urgencia.Checked)
+            {
+                Convertir.ConvertirNumero(110, resultadoConChequeo); ECC.Add(110);
+            }
+            else if (cat_seguridad.Checked)
+            {
+                Convertir.ConvertirNumero(108, resultadoConChequeo); ECC.Add(108); 
+            }
+
+            mmsi = MMSI_in.Text;
+            Socorro.MMSI(resultadoConChequeo, ECC, mmsi);
+    
+            Convertir.ConvertirNumero(109, resultadoConChequeo); ECC.Add(109); //Primer Telecomando fijo
+
+            if (nave_medica.Checked && !nave_aeronave.Checked)
+            {
+                Convertir.ConvertirNumero(111, resultadoConChequeo); ECC.Add(111);
+            }
+            else if (!nave_medica.Checked && nave_aeronave.Checked)
+            {
+                Convertir.ConvertirNumero(110, resultadoConChequeo); ECC.Add(110);
+            }
+            else if (!nave_medica.Checked && !nave_aeronave.Checked)
+            {
+                Convertir.ConvertirNumero(126, resultadoConChequeo); ECC.Add(126); // NO INFO --> segundo telecomando
+            }
+            // Enviar datos según el modo seleccionado
+            if (_modoActual == ModoFrecuencia.Frecuencias)
+            {
+                // Si el primer simbolo no es 0-1-2 descartar y si es menor a la longitud deseada agregar 0's o descart
+                // FRECUENCIAS TX/RX
+                string frecuenciaRx = txt_rx.Text;
+                General.Frec(resultadoConChequeo, ECC, frecuenciaRx);
+
+                string frecuenciaTx = txt_tx.Text;
+                General.Frec(resultadoConChequeo, ECC, frecuenciaTx);
+            }
+            else if (_modoActual == ModoFrecuencia.Canal)
+            {
+                // CANAL
+                string canal = string.Concat((canal_box.SelectedItem?.ToString() ?? string.Empty).Where(char.IsDigit));
+                General.Frec(resultadoConChequeo, ECC, canal);
+                General.Frec(resultadoConChequeo, ECC, canal);
+            }
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            Convertir.ConvertirNumero(127, resultadoConChequeo); ECC.Add(127); // ECC solo un EOS
+            Convertir.ConvertirNumero(Mod2Sum7Bits(ECC), resultadoConChequeo); // ECC calculado 
+            Convertir.ConvertirNumero(127, resultadoConChequeo); Convertir.ConvertirNumero(127, resultadoConChequeo);
+
+            List<int> phasignseq = new List<int> { 125, 111, 125, 110, 125, 109, 125, 108, 125, 107, 125, 106 }; // faltan 105 y 104
+            StringBuilder pss = new StringBuilder();
+
+            foreach (int ps in phasignseq)
+            {
+                Convertir.ConvertirNumero(ps, pss);
+            }
+
+            List<int> inicio_rx = new List<int> { 105, 104 }; // agrego los 105 y 104 al inicio del Rx
+            StringBuilder rx = new StringBuilder();
+            foreach (int pf in inicio_rx)
+            {
+                Convertir.ConvertirNumero(pf, rx);
+            }
+            rx.Append(resultadoConChequeo); // armo los Rx 
+
+            StringBuilder resultado = new StringBuilder();
+
+            for (int i = 0; i < resultadoConChequeo.Length; i += 10)
+            {
+                // Extraer 10 caracteres de resultadoConChequeo (o menos en la última iteración)
+                int longitud = Math.Min(10, resultadoConChequeo.Length - i);
+                string aux = resultadoConChequeo.ToString(i, longitud);
+                resultado.Append(aux);
+
+                // Extraer 10 caracteres de rx (o menos en la última iteración)
+                longitud = Math.Min(10, rx.Length - i);
+                string aux2 = rx.ToString(i, longitud);
+                resultado.Append(aux2);
+            }
+
+            pss.Append(resultado);
+            StringBuilder dot = new StringBuilder();
+
+            for (int i = 0; i <= 20; i += 1)
+            {
+                dot.Append(i % 2 == 0 ? "0" : "1");
+            }
+            dot.Append(pss);
+
+            string rutadesalida = AppDomain.CurrentDomain.BaseDirectory;
+
+            string archivoFinal = Path.Combine(rutadesalida, "prueba_transreceptor.txt");
+
+            //File.WriteAllText(archivoFinal, pss.ToString().TrimEnd());
+            // CON DOT
+            File.WriteAllText(archivoFinal, dot.ToString().TrimEnd());
+
+            // MODULACION Y REPRODUCCION DE AUDIO
+            BFSKModulator.GenerateWav(archivoFinal, Path.Combine(rutadesalida, "prueba_transreceptor.wav"), VHF);
+            AudioPlayer.Play(Path.Combine(rutadesalida, "prueba_transreceptor.wav"));
+
+            ECC.Clear();
+            resultadoConChequeo.Clear();
+            pss.Clear();
+            rx.Clear();
+            resultado.Clear();
+            dot.Clear();
+
+            // Resetear bloqueos después de enviar
+            _updatingUI = true;
+            txt_tx.Clear();
+            txt_rx.Clear();
+            canal_box.SelectedIndex = -1;
+            txt_tx.Enabled = true;
+            txt_rx.Enabled = true;
+            canal_box.Enabled = true;
+            _modoActual = ModoFrecuencia.Ninguno;
+            _updatingUI = false;
+            form_geografica.Checked = false;
         }
 
         private void combox_sig_com_SelectedIndexChanged(object sender, EventArgs e)
@@ -537,6 +717,18 @@ namespace Transreceptor_v1
 
         private void radioButton_categoria_CheckedChanged(object sender, EventArgs e)
         {
+            VerificarCondiciones();
+        }
+
+        private void form_geografica_CheckedChanged(object sender, EventArgs e)
+        {
+            categoria.Visible = true;
+            label1.Visible = true;
+            txt_tx.Visible = true;
+            label2.Visible = true;
+            txt_rx.Visible = true;
+            label3.Visible = true;
+            canal_box.Visible = true;
             VerificarCondiciones();
         }
     }

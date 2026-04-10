@@ -45,23 +45,28 @@
             combox_sig_com = new ComboBox();
             label_com_sig = new Label();
             categoria = new GroupBox();
-            radioButton1 = new RadioButton();
-            radioButton2 = new RadioButton();
+            cat_urgencia = new RadioButton();
+            cat_seguridad = new RadioButton();
             txt_tx = new TextBox();
             label1 = new Label();
             txt_rx = new TextBox();
             label2 = new Label();
             label3 = new Label();
             canal_box = new ComboBox();
+            tipo_de_nave = new GroupBox();
+            nave_aeronave = new RadioButton();
+            nave_medica = new RadioButton();
+            nave_comun = new RadioButton();
             grupo_frec.SuspendLayout();
             grupo_formato.SuspendLayout();
             categoria.SuspendLayout();
+            tipo_de_nave.SuspendLayout();
             SuspendLayout();
             // 
             // boton_socorro
             // 
             boton_socorro.BackColor = Color.Red;
-            boton_socorro.Location = new Point(89, 35);
+            boton_socorro.Location = new Point(200, 35);
             boton_socorro.Name = "boton_socorro";
             boton_socorro.Size = new Size(126, 115);
             boton_socorro.TabIndex = 0;
@@ -72,7 +77,7 @@
             // label_mmsi
             // 
             label_mmsi.AutoSize = true;
-            label_mmsi.Location = new Point(253, 15);
+            label_mmsi.Location = new Point(384, 18);
             label_mmsi.Name = "label_mmsi";
             label_mmsi.Size = new Size(50, 20);
             label_mmsi.TabIndex = 2;
@@ -80,7 +85,7 @@
             // 
             // MMSI_in
             // 
-            MMSI_in.Location = new Point(313, 12);
+            MMSI_in.Location = new Point(444, 15);
             MMSI_in.Name = "MMSI_in";
             MMSI_in.Size = new Size(125, 27);
             MMSI_in.TabIndex = 3;
@@ -114,7 +119,7 @@
             // 
             grupo_frec.Controls.Add(op_vhf);
             grupo_frec.Controls.Add(op_mf_hf);
-            grupo_frec.Location = new Point(291, 58);
+            grupo_frec.Location = new Point(330, 58);
             grupo_frec.Name = "grupo_frec";
             grupo_frec.Size = new Size(128, 92);
             grupo_frec.TabIndex = 10;
@@ -156,6 +161,7 @@
             form_geografica.TabStop = true;
             form_geografica.Text = "GEOGRAFICA";
             form_geografica.UseVisualStyleBackColor = true;
+            form_geografica.CheckedChanged += form_geografica_CheckedChanged;
             // 
             // form_individual
             // 
@@ -238,8 +244,8 @@
             // 
             // categoria
             // 
-            categoria.Controls.Add(radioButton1);
-            categoria.Controls.Add(radioButton2);
+            categoria.Controls.Add(cat_urgencia);
+            categoria.Controls.Add(cat_seguridad);
             categoria.Location = new Point(28, 231);
             categoria.Name = "categoria";
             categoria.Size = new Size(128, 92);
@@ -248,29 +254,29 @@
             categoria.Text = "Categoria";
             categoria.Visible = false;
             // 
-            // radioButton1
+            // cat_urgencia
             // 
-            radioButton1.AutoSize = true;
-            radioButton1.Location = new Point(20, 56);
-            radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(89, 24);
-            radioButton1.TabIndex = 10;
-            radioButton1.TabStop = true;
-            radioButton1.Text = "Urgencia";
-            radioButton1.UseVisualStyleBackColor = true;
-            radioButton1.CheckedChanged += radioButton_categoria_CheckedChanged;
+            cat_urgencia.AutoSize = true;
+            cat_urgencia.Location = new Point(20, 56);
+            cat_urgencia.Name = "cat_urgencia";
+            cat_urgencia.Size = new Size(89, 24);
+            cat_urgencia.TabIndex = 10;
+            cat_urgencia.TabStop = true;
+            cat_urgencia.Text = "Urgencia";
+            cat_urgencia.UseVisualStyleBackColor = true;
+            cat_urgencia.CheckedChanged += radioButton_categoria_CheckedChanged;
             // 
-            // radioButton2
+            // cat_seguridad
             // 
-            radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(20, 26);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(98, 24);
-            radioButton2.TabIndex = 9;
-            radioButton2.TabStop = true;
-            radioButton2.Text = "Seguridad";
-            radioButton2.UseVisualStyleBackColor = true;
-            radioButton2.CheckedChanged += radioButton_categoria_CheckedChanged;
+            cat_seguridad.AutoSize = true;
+            cat_seguridad.Location = new Point(20, 26);
+            cat_seguridad.Name = "cat_seguridad";
+            cat_seguridad.Size = new Size(98, 24);
+            cat_seguridad.TabIndex = 9;
+            cat_seguridad.TabStop = true;
+            cat_seguridad.Text = "Seguridad";
+            cat_seguridad.UseVisualStyleBackColor = true;
+            cat_seguridad.CheckedChanged += radioButton_categoria_CheckedChanged;
             // 
             // txt_tx
             // 
@@ -335,11 +341,58 @@
             canal_box.Visible = false;
             canal_box.SelectedIndexChanged += canal_box_SelectedIndexChanged;
             // 
+            // tipo_de_nave
+            // 
+            tipo_de_nave.Controls.Add(nave_aeronave);
+            tipo_de_nave.Controls.Add(nave_medica);
+            tipo_de_nave.Controls.Add(nave_comun);
+            tipo_de_nave.ImeMode = ImeMode.On;
+            tipo_de_nave.Location = new Point(25, 30);
+            tipo_de_nave.Name = "tipo_de_nave";
+            tipo_de_nave.Size = new Size(167, 120);
+            tipo_de_nave.TabIndex = 11;
+            tipo_de_nave.TabStop = false;
+            tipo_de_nave.Text = "Tipo de Nave";
+            // 
+            // nave_aeronave
+            // 
+            nave_aeronave.AutoSize = true;
+            nave_aeronave.Location = new Point(20, 86);
+            nave_aeronave.Name = "nave_aeronave";
+            nave_aeronave.Size = new Size(149, 24);
+            nave_aeronave.TabIndex = 11;
+            nave_aeronave.TabStop = true;
+            nave_aeronave.Text = "Barcos/Aeronaves";
+            nave_aeronave.UseVisualStyleBackColor = true;
+            // 
+            // nave_medica
+            // 
+            nave_medica.AutoSize = true;
+            nave_medica.Location = new Point(20, 56);
+            nave_medica.Name = "nave_medica";
+            nave_medica.Size = new Size(79, 24);
+            nave_medica.TabIndex = 10;
+            nave_medica.TabStop = true;
+            nave_medica.Text = "Medica";
+            nave_medica.UseVisualStyleBackColor = true;
+            // 
+            // nave_comun
+            // 
+            nave_comun.AutoSize = true;
+            nave_comun.Location = new Point(20, 26);
+            nave_comun.Name = "nave_comun";
+            nave_comun.Size = new Size(80, 24);
+            nave_comun.TabIndex = 9;
+            nave_comun.TabStop = true;
+            nave_comun.Text = "Normal";
+            nave_comun.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(723, 355);
+            Controls.Add(tipo_de_nave);
             Controls.Add(label3);
             Controls.Add(canal_box);
             Controls.Add(txt_rx);
@@ -366,6 +419,8 @@
             grupo_formato.PerformLayout();
             categoria.ResumeLayout(false);
             categoria.PerformLayout();
+            tipo_de_nave.ResumeLayout(false);
+            tipo_de_nave.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -389,13 +444,17 @@
         private ComboBox combox_sig_com;
         private Label label_com_sig;
         private GroupBox categoria;
-        private RadioButton radioButton1;
-        private RadioButton radioButton2;
+        private RadioButton cat_urgencia;
+        private RadioButton cat_seguridad;
         private TextBox txt_tx;
         private Label label1;
         private TextBox txt_rx;
         private Label label2;
         private Label label3;
         private ComboBox canal_box;
+        private RadioButton nave_aeronave;
+        private RadioButton nave_medica;
+        private RadioButton nave_comun;
+        public GroupBox tipo_de_nave;
     }
 }
