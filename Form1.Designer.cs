@@ -57,6 +57,8 @@
             nave_aeronave = new RadioButton();
             nave_medica = new RadioButton();
             nave_comun = new RadioButton();
+            MMSI_RX = new TextBox();
+            label_MMSIRX = new Label();
             grupo_frec.SuspendLayout();
             grupo_formato.SuspendLayout();
             categoria.SuspendLayout();
@@ -66,7 +68,7 @@
             // boton_socorro
             // 
             boton_socorro.BackColor = Color.Red;
-            boton_socorro.Location = new Point(200, 35);
+            boton_socorro.Location = new Point(200, 50);
             boton_socorro.Name = "boton_socorro";
             boton_socorro.Size = new Size(126, 115);
             boton_socorro.TabIndex = 0;
@@ -77,7 +79,7 @@
             // label_mmsi
             // 
             label_mmsi.AutoSize = true;
-            label_mmsi.Location = new Point(384, 18);
+            label_mmsi.Location = new Point(499, 24);
             label_mmsi.Name = "label_mmsi";
             label_mmsi.Size = new Size(50, 20);
             label_mmsi.TabIndex = 2;
@@ -85,7 +87,7 @@
             // 
             // MMSI_in
             // 
-            MMSI_in.Location = new Point(444, 15);
+            MMSI_in.Location = new Point(559, 21);
             MMSI_in.Name = "MMSI_in";
             MMSI_in.Size = new Size(125, 27);
             MMSI_in.TabIndex = 3;
@@ -96,7 +98,7 @@
             // 
             nature_distress.FormattingEnabled = true;
             nature_distress.Items.AddRange(new object[] { "Incendio, explosión", "Inundación", "Colisión", "Encalladura", "Escorado, en peligro de zozobra", "Naufragio", "Sin gobierno y a la deriva ", "Peligro no definido ", "Abandono del barco ", "Piratería/ataque a mano armada", "Hombre al agua" });
-            nature_distress.Location = new Point(28, 195);
+            nature_distress.Location = new Point(28, 210);
             nature_distress.Name = "nature_distress";
             nature_distress.Size = new Size(237, 28);
             nature_distress.TabIndex = 4;
@@ -119,7 +121,7 @@
             // 
             grupo_frec.Controls.Add(op_vhf);
             grupo_frec.Controls.Add(op_mf_hf);
-            grupo_frec.Location = new Point(330, 58);
+            grupo_frec.Location = new Point(330, 73);
             grupo_frec.Name = "grupo_frec";
             grupo_frec.Size = new Size(128, 92);
             grupo_frec.TabIndex = 10;
@@ -144,7 +146,7 @@
             grupo_formato.Controls.Add(form_individual);
             grupo_formato.Controls.Add(form_grupo);
             grupo_formato.Controls.Add(form_all_ships);
-            grupo_formato.Location = new Point(483, 58);
+            grupo_formato.Location = new Point(483, 73);
             grupo_formato.Name = "grupo_formato";
             grupo_formato.Size = new Size(210, 150);
             grupo_formato.TabIndex = 11;
@@ -173,6 +175,7 @@
             form_individual.TabStop = true;
             form_individual.Text = "INDIVIDUAL";
             form_individual.UseVisualStyleBackColor = true;
+            form_individual.CheckedChanged += form_individual_CheckedChanged;
             // 
             // form_grupo
             // 
@@ -201,7 +204,7 @@
             // boton_enviar
             // 
             boton_enviar.BackColor = Color.Lime;
-            boton_enviar.Location = new Point(619, 246);
+            boton_enviar.Location = new Point(619, 261);
             boton_enviar.Name = "boton_enviar";
             boton_enviar.Size = new Size(74, 61);
             boton_enviar.TabIndex = 12;
@@ -213,7 +216,7 @@
             // label_distress
             // 
             label_distress.AutoSize = true;
-            label_distress.Location = new Point(28, 172);
+            label_distress.Location = new Point(28, 187);
             label_distress.Name = "label_distress";
             label_distress.Size = new Size(237, 20);
             label_distress.TabIndex = 13;
@@ -225,7 +228,7 @@
             // 
             combox_sig_com.FormattingEnabled = true;
             combox_sig_com.Items.AddRange(new object[] { "F3E/G3E ALL MODES TP", "F3E/G3E DUPLEX TP", "J3E TP", "F1B/J2B TTY-FEC", "F1B/J2B TTY-ARQ", "Sin información" });
-            combox_sig_com.Location = new Point(271, 195);
+            combox_sig_com.Location = new Point(271, 210);
             combox_sig_com.Name = "combox_sig_com";
             combox_sig_com.Size = new Size(187, 28);
             combox_sig_com.TabIndex = 14;
@@ -235,7 +238,7 @@
             // label_com_sig
             // 
             label_com_sig.AutoSize = true;
-            label_com_sig.Location = new Point(271, 172);
+            label_com_sig.Location = new Point(271, 187);
             label_com_sig.Name = "label_com_sig";
             label_com_sig.Size = new Size(187, 20);
             label_com_sig.TabIndex = 15;
@@ -246,7 +249,7 @@
             // 
             categoria.Controls.Add(cat_urgencia);
             categoria.Controls.Add(cat_seguridad);
-            categoria.Location = new Point(28, 231);
+            categoria.Location = new Point(28, 246);
             categoria.Name = "categoria";
             categoria.Size = new Size(128, 92);
             categoria.TabIndex = 11;
@@ -280,7 +283,7 @@
             // 
             // txt_tx
             // 
-            txt_tx.Location = new Point(309, 243);
+            txt_tx.Location = new Point(309, 258);
             txt_tx.Name = "txt_tx";
             txt_tx.Size = new Size(125, 27);
             txt_tx.TabIndex = 17;
@@ -292,7 +295,7 @@
             // 
             label1.AutoSize = true;
             label1.Enabled = false;
-            label1.Location = new Point(182, 246);
+            label1.Location = new Point(182, 261);
             label1.Name = "label1";
             label1.Size = new Size(121, 20);
             label1.TabIndex = 16;
@@ -301,7 +304,7 @@
             // 
             // txt_rx
             // 
-            txt_rx.Location = new Point(309, 284);
+            txt_rx.Location = new Point(309, 299);
             txt_rx.Name = "txt_rx";
             txt_rx.Size = new Size(125, 27);
             txt_rx.TabIndex = 19;
@@ -313,7 +316,7 @@
             // 
             label2.AutoSize = true;
             label2.Enabled = false;
-            label2.Location = new Point(182, 287);
+            label2.Location = new Point(182, 302);
             label2.Name = "label2";
             label2.Size = new Size(123, 20);
             label2.TabIndex = 18;
@@ -323,7 +326,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(503, 250);
+            label3.Location = new Point(503, 265);
             label3.Name = "label3";
             label3.Size = new Size(46, 20);
             label3.TabIndex = 21;
@@ -334,7 +337,7 @@
             // 
             canal_box.FormattingEnabled = true;
             canal_box.Items.AddRange(new object[] { "2187.5 kHz", "4207.5 kHz", "CH 70", "CH 16" });
-            canal_box.Location = new Point(466, 273);
+            canal_box.Location = new Point(466, 288);
             canal_box.Name = "canal_box";
             canal_box.Size = new Size(122, 28);
             canal_box.TabIndex = 20;
@@ -347,7 +350,7 @@
             tipo_de_nave.Controls.Add(nave_medica);
             tipo_de_nave.Controls.Add(nave_comun);
             tipo_de_nave.ImeMode = ImeMode.On;
-            tipo_de_nave.Location = new Point(25, 30);
+            tipo_de_nave.Location = new Point(25, 45);
             tipo_de_nave.Name = "tipo_de_nave";
             tipo_de_nave.Size = new Size(167, 120);
             tipo_de_nave.TabIndex = 11;
@@ -387,11 +390,34 @@
             nave_comun.Text = "Normal";
             nave_comun.UseVisualStyleBackColor = true;
             // 
+            // MMSI_RX
+            // 
+            MMSI_RX.Location = new Point(336, 21);
+            MMSI_RX.Name = "MMSI_RX";
+            MMSI_RX.Size = new Size(125, 27);
+            MMSI_RX.TabIndex = 23;
+            MMSI_RX.Visible = false;
+            MMSI_RX.TextChanged += MMSI_RX_TextChanged;
+            MMSI_RX.KeyPress += MMSI_RX_KeyPress;
+            // 
+            // label_MMSIRX
+            // 
+            label_MMSIRX.AutoSize = true;
+            label_MMSIRX.Location = new Point(258, 24);
+            label_MMSIRX.Name = "label_MMSIRX";
+            label_MMSIRX.RightToLeft = RightToLeft.No;
+            label_MMSIRX.Size = new Size(72, 20);
+            label_MMSIRX.TabIndex = 22;
+            label_MMSIRX.Text = "MMSI RX:";
+            label_MMSIRX.Visible = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(723, 355);
+            Controls.Add(MMSI_RX);
+            Controls.Add(label_MMSIRX);
             Controls.Add(tipo_de_nave);
             Controls.Add(label3);
             Controls.Add(canal_box);
@@ -456,5 +482,7 @@
         private RadioButton nave_medica;
         private RadioButton nave_comun;
         public GroupBox tipo_de_nave;
+        private TextBox MMSI_RX;
+        private Label label_MMSIRX;
     }
 }
