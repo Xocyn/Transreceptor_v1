@@ -137,6 +137,27 @@ namespace Transreceptor_v1
             Convertir.ConvertirNumero(hora, resultadoConChequeo); ECC.Add(hora);
             Convertir.ConvertirNumero(minutos, resultadoConChequeo); ECC.Add(minutos);
         }
+        public static void Posicion_2(StringBuilder resultadoConChequeo, List<int> ECC)
+        {
+            // -38.04248790955501, -57.545178158600976  
+            Convertir.ConvertirNumero(33, resultadoConChequeo); ECC.Add(33);
+            Convertir.ConvertirNumero(80, resultadoConChequeo); ECC.Add(80);
+            Convertir.ConvertirNumero(40, resultadoConChequeo); ECC.Add(40);
+            Convertir.ConvertirNumero(57, resultadoConChequeo); ECC.Add(57);
+            Convertir.ConvertirNumero(54, resultadoConChequeo); ECC.Add(54);
+            Convertir.ConvertirNumero(126, resultadoConChequeo); ECC.Add(126); // Prueba Pos4
+
+            // Obtener zona horaria de Argentina
+            TimeZoneInfo argentinaZone = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
+
+            // Convertir hora UTC a hora Argentina
+            DateTime argentinaTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, argentinaZone);
+
+            int hora = argentinaTime.Hour;
+            int minutos = argentinaTime.Minute;
+            Convertir.ConvertirNumero(hora, resultadoConChequeo); ECC.Add(hora);
+            Convertir.ConvertirNumero(minutos, resultadoConChequeo); ECC.Add(minutos);
+        }
     }
 
     internal class General

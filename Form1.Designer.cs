@@ -59,6 +59,7 @@
             nave_comun = new RadioButton();
             MMSI_RX = new TextBox();
             label_MMSIRX = new Label();
+            cat_rutina = new RadioButton();
             grupo_frec.SuspendLayout();
             grupo_formato.SuspendLayout();
             categoria.SuspendLayout();
@@ -247,11 +248,12 @@
             // 
             // categoria
             // 
+            categoria.Controls.Add(cat_rutina);
             categoria.Controls.Add(cat_urgencia);
             categoria.Controls.Add(cat_seguridad);
             categoria.Location = new Point(28, 246);
             categoria.Name = "categoria";
-            categoria.Size = new Size(128, 92);
+            categoria.Size = new Size(128, 121);
             categoria.TabIndex = 11;
             categoria.TabStop = false;
             categoria.Text = "Categoria";
@@ -411,11 +413,22 @@
             label_MMSIRX.Text = "MMSI RX:";
             label_MMSIRX.Visible = false;
             // 
+            // cat_rutina
+            // 
+            cat_rutina.AutoSize = true;
+            cat_rutina.Location = new Point(20, 86);
+            cat_rutina.Name = "cat_rutina";
+            cat_rutina.Size = new Size(72, 24);
+            cat_rutina.TabIndex = 11;
+            cat_rutina.TabStop = true;
+            cat_rutina.Text = "Rutina";
+            cat_rutina.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(723, 355);
+            ClientSize = new Size(714, 379);
             Controls.Add(MMSI_RX);
             Controls.Add(label_MMSIRX);
             Controls.Add(tipo_de_nave);
@@ -484,5 +497,6 @@
         public GroupBox tipo_de_nave;
         private TextBox MMSI_RX;
         private Label label_MMSIRX;
+        private RadioButton cat_rutina;
     }
 }
